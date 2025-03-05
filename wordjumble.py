@@ -54,13 +54,13 @@ def solve_one_jumble(letters):
     # Returned data should be a list of strings (words)
     # Example: solve_one_jumble('ILST') --> ['LIST', 'SILT', 'SLIT']
     valid_words = []
-    dictionary = get_file_lines
+    dictionary = get_file_lines()
     letters = letters.upper()
 
     perms = [''.join(p) for p in permutations(letters)]
 
     for word in perms:
-        if word in dictionary:
+        if word in dictionary and word not in valid_words:
           valid_words.append(word)
 
     return valid_words
