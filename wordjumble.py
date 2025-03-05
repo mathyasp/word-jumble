@@ -23,7 +23,7 @@
 
 # HINT: You may want to use itertools.combinations to solve the final jumble
 # import itertools
-
+from itertools import permutations
 
 def get_file_lines(filename='/usr/share/dict/words'):
     """Return a list of strings on separate lines in the given text file with
@@ -54,9 +54,14 @@ def solve_one_jumble(letters):
     # Returned data should be a list of strings (words)
     # Example: solve_one_jumble('ILST') --> ['LIST', 'SILT', 'SLIT']
     valid_words = []
+    dictionary = get_file_lines
+    letters = letters.upper()
 
-    # TODO: Unscramble the given letters into all valid words (or at least one)
-    # ========> YOUR CODE HERE <========
+    perms = [''.join(p) for p in permutations(letters)]
+
+    for word in perms:
+        if word in dictionary:
+          valid_words.append(word)
 
     return valid_words
 
