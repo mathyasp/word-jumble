@@ -23,7 +23,7 @@
 
 # HINT: You may want to use itertools.combinations to solve the final jumble
 # import itertools
-from itertools import permutations
+from itertools import permutations, combinations, product
 
 def get_file_lines(filename='/usr/share/dict/words'):
     """Return a list of strings on separate lines in the given text file with
@@ -66,6 +66,55 @@ def solve_one_jumble(letters):
     return valid_words
 
 
+def unscramble_phrases(letter_bank, words_dict, group_sizes):
+    """
+    Unscrambles letters into valid phrases based on specified group sizes
+    Args:
+        letter_bank (str): String of letters to unscramble
+        words_dict (dict): Dictionary of valid words
+        group_sizes (list): List of integers specifying the size of each word
+    Returns: List of valid phrase combinations or empty list if none found
+    """
+    def is_valid_word(letters):
+        """Helper function to check if letters form a valid word"""
+        sorted_letters = ''.join(sorted(letters))
+        return sorted_letters in words_dict
+
+    def try_combination(parts):
+        """Helper function to check if all parts form valid words"""
+        valid_words = []
+        for part in parts:
+            if not is_valid_word(part):
+                return None
+            valid_words.append(words_dict[''.join(sorted(part))][0])
+        return tuple(valid_words)
+
+    # Get all possible permutations of letters
+    all_perms = [''.join(p) for p in permutations(letter_bank)]
+    valid_phrases = set()
+
+    # Try each permutation
+    for perm in all_perms:
+        current_pos = 0
+        parts = []
+        
+        # Split permutation into parts based on group sizes
+        for size in group_sizes:
+            if current_pos + size <= len(perm):
+                parts.append(perm[current_pos:current_pos + size])
+                current_pos += size
+        
+        # Check if this combination forms valid words
+        if len(parts) == len(group_sizes):
+            solution = try_combination(parts)
+            if solution:
+                valid_phrases.add(solution)
+
+    # Convert solutions back to the required format
+    if valid_phrases:
+        return [phrase for phrase in valid_phrases]
+    return []
+
 def solve_final_jumble(letters, final_circles):
     """Solve the final jumbled phrase by unscrambling the given letters.
     Parameters:
@@ -105,7 +154,8 @@ def solve_final_jumble(letters, final_circles):
     valid_phrases = []
 
     # TODO: Unscramble the given letters into all valid phrases
-    # ========> YOUR CODE HERE <========
+    words_dict = {sorted_letters(word): [word] for word in get_file_lines()}
+    valid_phrases = unscramble_phrases(letters, words_dict, group_sizes)
 
     return valid_phrases
 
